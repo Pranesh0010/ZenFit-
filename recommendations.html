@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Recommendations - ZenFit</title>
+  <link rel="stylesheet" href="recommendations.css">
+</head>
+<body>
+  <div class="wrapper">
+    <section class="recommendations-container">
+      <h2>Your Personalized Fitness Recommendations</h2>
+      <div id="recommendations">Loading recommendations...</div>
+      <button onclick="goBack()">Go Back</button>
+    </section>
+  </div>
+
+  <script>
+    async function fetchAIRecommendations() {
+      const params = new URLSearchParams(window.location.search);
+      const userInput = `I am ${params.get('age')} years old, my height is ${params.get('height')} cm, my weight is ${params.get('weight')} kg, and my fitness goal is ${params.get('goal')}. Suggest nutritional supplements.`;
+
+      const apiKey = "AIzaSyCnCjMDcDiEC7Qii15A1RMFxUrpZ4wSKzU"; // 🔹 Replace with your actual API key
+      const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: userInput }] }]
+          })
+        });
+
+        const data = await response.json();
+        console.log("API Response:", data); // 🔹 Log response to check for errors
+
+        if (data.error) {
+          document.getElementById("recommendations").innerText = `Error: ${data.error.message}`;
+          return;
+        }
+
+        // Extract AI response text
+        const aiRecommendation = data.candidates?.[0]?.content?.parts?.[0]?.text || "No recommendation found.";
+        document.getElementById("recommendations").innerText = aiRecommendation;
+
+      } catch (error) {
+        console.error("Error fetching AI response:", error);
+        document.getElementById("recommendations").innerText = "Failed to load recommendations. Please try again.";
+      }
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    // Fetch AI-generated recommendations when the page loads
+    window.onload = fetchAIRecommendations;
+  </script>
+</body>
+</html>

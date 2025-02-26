@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Tracking</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* Form Styling */
+        form {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        input {
+            margin: 5px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Chart Styling */
+        .chart-container {
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nutrition Tracking</h1>
+
+    <!-- User Input Form -->
+    <form id="nutritionForm">
+        <div id="nutrientInputs">
+            <label for="nutrient">Nutrient:</label>
+            <input type="text" name="nutrient" required placeholder="e.g., Protein">
+            
+            <label for="intake">Intake (grams):</label>
+            <input type="number" name="intake" required placeholder="e.g., 30">
+        </div>
+        <button type="button" onclick="addNutrient()">➕ Add More</button>
+        <button type="submit">📊 Update Chart</button>
+    </form>
+
+    <!-- Chart Container -->
+    <div class="chart-container">
+        <canvas id="intakeChart"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById('intakeChart').getContext('2d');
+
+            let chartData = {
+                labels: [],
+                datasets: [{
+                    label: 'Daily Intake (grams)',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            };
+
+            let intakeChart = new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            document.getElementById("nutritionForm").addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                // Collect all nutrient data
+                let nutrientInputs = document.querySelectorAll("#nutrientInputs input[name='nutrient']");
+                let intakeInputs = document.querySelectorAll("#nutrientInputs input[name='intake']");
+
+                let nutrients = [];
+                let intakes = [];
+
+                nutrientInputs.forEach((input, index) => {
+                    if (input.value && intakeInputs[index].value) {
+                        nutrients.push(input.value);
+                        intakes.push(parseFloat(intakeInputs[index].value));
+                    }
+                });
+
+                // Update chart data
+                chartData.labels = nutrients;
+                chartData.datasets[0].data = intakes;
+                intakeChart.update();
+            });
+        });
+
+        // Function to add more input fields dynamically
+        function addNutrient() {
+            let nutrientInputs = document.getElementById("nutrientInputs");
+            let newField = document.createElement("div");
+            
+            newField.innerHTML = `
+                <label for="nutrient">Nutrient:</label>
+                <input type="text" name="nutrient" required placeholder="e.g., Fiber">
+                
+                <label for="intake">Intake (grams):</label>
+                <input type="number" name="intake" required placeholder="e.g., 10">
+            `;
+
+            nutrientInputs.appendChild(newField);
+        }
+    </script>
+</body>
+</html>

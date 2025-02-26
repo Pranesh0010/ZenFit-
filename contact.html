@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - ZenFit</title>
+    <link rel="stylesheet" href="style2.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <div class="wrapper" id="contact">
+        <section class="contact-form-container">
+            <div class="top">
+                <h2>Contact Us</h2>
+                <p>We'd love to hear from you! Fill out the form below to get in touch.</p>
+            </div>
+
+            <form id="contactForm" onsubmit="sendEmail(); return false;">
+                <div class="input-box">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your name">
+                </div>
+
+                <div class="input-box">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="input-box">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" required placeholder="Your message" rows="4"></textarea>
+                </div>
+
+                <div class="input-box">
+                    <input type="submit" class="submit" id="submitBtn" value="Send Message">
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        // Initialize EmailJS with your Public Key
+        (function() {
+            emailjs.init("kae4rNP4FoJM-yclh");
+        })();
+
+        function sendEmail() {
+            const templateParams = {
+                to_email: "zen086352@gmail.com",
+                from_name: document.getElementById("name").value,
+                from_email: document.getElementById("email").value,
+                message: document.getElementById("message").value,
+            };
+
+            emailjs.send("service_1k9ytog", "template_4tvk5fl", templateParams)
+                .then(response => {
+                    alert("Message sent successfully!");
+                    document.getElementById("contactForm").reset();
+                })
+                .catch(error => {
+                    alert("Failed to send message. Try again later.");
+                    console.error("Error:", error);
+                });
+        }
+    </script>
+</body>
+</html>
